@@ -1,43 +1,27 @@
-pipeline {
-    agent any
-
-    stages {
-        stage('Clone repository') {
-            when {
-                expression {
-                    env.BRANCH_NAME == 'dev'
-                }
-            }
-            steps {
-                checkout scm
-            }
+node {
+    def app
+    
+    stage('Clone repository') {
+        if (env.BRANCH_NAME == 'dev') {
+            // Your clone repository steps here
+            checkout scm
         }
-        stage('Build image') {
-            when {
-                expression {
-                    env.BRANCH_NAME == 'dev'
-                }
-            }
-            steps {
-                script {
-                    def app = docker.build("paunovskidavid/kiii-lab4-new")
-                }
-            }
+    }
+    
+    stage('Build image') {
+        if (env.BRANCH_NAME == 'dev') {
+            // Your build image steps here
+            app = docker.build("paunovskidavid/kiii-lab4-new")
         }
-        stage('Push image') {
-            when {
-                expression {
-                    env.BRANCH_NAME == 'dev'
-                }
-            }
-            steps {
-                script {
-                    docker.withRegistry('https://registry.hub.docker.com', 'docker-creds') {
-                        app.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
-                        app.push("${env.BRANCH_NAME}-latest")
-                        // signal the orchestrator that there is a new version
-                    }
-                }
+    }
+    
+    stage('Push image') {
+        if (env.BRANCH_NAME == 'dev') {
+            // Your push image steps here
+            docker.withRegistry('https://registry.hub.docker.com', 'docker-creds') {
+                app.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
+                app.push("${env.BRANCH_NAME}-latest")
+                // signal the orchestrator that there is a new version
             }
         }
     }
