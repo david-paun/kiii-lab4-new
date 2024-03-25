@@ -2,28 +2,22 @@ node {
     def app
     
     stage('Clone repository') {
-        when {
-            branch 'dev' // Only trigger this stage for the 'dev' branch
-        }
-        steps {
+        if (env.BRANCH_NAME == 'dev') {
+            // Your clone repository steps here
             checkout scm
         }
     }
     
     stage('Build image') {
-        when {
-            branch 'dev' // Only trigger this stage for the 'dev' branch
-        }
-        steps {
+        if (env.BRANCH_NAME == 'dev') {
+            // Your build image steps here
             app = docker.build("paunovskidavid/kiii-lab4-new")
         }
     }
     
     stage('Push image') {
-        when {
-            branch 'dev' // Only trigger this stage for the 'dev' branch
-        }
-        steps {
+        if (env.BRANCH_NAME == 'dev') {
+            // Your push image steps here
             docker.withRegistry('https://registry.hub.docker.com', 'docker-creds') {
                 app.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
                 app.push("${env.BRANCH_NAME}-latest")
