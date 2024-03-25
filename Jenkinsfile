@@ -2,11 +2,11 @@ node {
     def app
     
     stage('Clone repository') {
-  when {
-        expression {
-              env.BRANCH_NAME == 'dev'
-             }
-          }
+        when {
+            expression {
+                env.BRANCH_NAME == 'dev'
+            }
+        }
 
         steps {
             checkout scm
@@ -14,22 +14,24 @@ node {
     }
     
     stage('Build image') {
-  when {
-        expression {
-              env.BRANCH_NAME == 'dev'
-             }
-          }
+        when {
+            expression {
+                env.BRANCH_NAME == 'dev'
+            }
+        }
+
         steps {
             app = docker.build("paunovskidavid/kiii-lab4-new")
         }
     }
     
     stage('Push image') {
-  when {
-        expression {
-              env.BRANCH_NAME == 'dev'
-             }
-          }
+        when {
+            expression {
+                env.BRANCH_NAME == 'dev'
+            }
+        }
+
         steps {
             docker.withRegistry('https://registry.hub.docker.com', 'docker-creds') {
                 app.push("${env.BRANCH_NAME}-${env.BUILD_NUMBER}")
